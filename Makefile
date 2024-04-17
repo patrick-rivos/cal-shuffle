@@ -3,7 +3,7 @@ LD := ld-2-trunk ld-2-42 ld-2-41
 CC1 := cc1
 
 # rv64
-rv64: stamps/binutils
+rv64: stamps/binutils stamps/cc1
 	eval "$(foreach X,$(CC1), $(foreach Y,$(AS),$(foreach Z,$(LD),echo $X-$Y-$Z && rm -rf $X-$Y-$Z && mkdir $X-$Y-$Z && cp -r $X/* $Y/* $Z/* $X-$Y-$Z &&))) true"
 	cargo build --bins --release
 	cp ./target/release/cc_rand .
@@ -41,3 +41,18 @@ stamps/binutils:
 
 	mkdir -p stamps
 	touch stamps/binutils
+
+stamps/cc1:
+	rm -rf cc1-trunk
+	cd riscv-gnu-toolchain && git submodule update --init gcc
+	cd riscv-gnu-toolchain/gcc && git checkout master
+
+	mkdir cc1-trunk
+	cd cc1-trunk && ../riscv-gnu-toolchain/configure --prefix=$(shell pwd)/cc1-trunk --with-multilib-generator="rv64gcv-lp64d--"
+	cd cc1-trunk && $(MAKE) linux -j32
+
+	mkdir -p cc1
+	cp -r ./cc1-trunk/libexec/gcc/riscv64-unknown-linux-gnu/14.0.1/* cc1
+
+	mkdir -p stamps
+	touch stamps/cc1
