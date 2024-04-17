@@ -1,0 +1,16 @@
+[package]
+name = "cal-shuffle"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+log = "0.4.21"
+rand = "0.8.5"
+
+[[bin]]
+name = "cc_rand"
+path = "src/cc_rand.rs"
+
+[[bin]]
+name = "cxx_rand"
+path = "src/cxx_rand.rs"
